@@ -3,9 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050303">
+  <meta name="description" content="Youssef es un Genio">
   <title>Youssef es un Genio</title>
+  <style>
+    :root {
+      --negro: #050303;
+      --rojo: #c4161f;
+      --rojo-oscuro: #7d0d14;
+      --papel: #efe6d6;
+      --hoja: #e9e2d3;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: radial-gradient(ellipse at 70% 30%, #1d0709 0%, var(--negro) 70%);
+      color: var(--papel);
+      font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Noto Serif", Georgia, "Times New Roman", serif;
+      overflow: hidden;
+    }
+
+    .escena { position: fixed; inset: 0; animation: sacudida .3s linear 1.6s; }
+
+    /* Sol rojo */
+    .sol {
+      position: absolute; right: 4vw; top: 8vh;
+      width: min(68vmin, 640px); aspect-ratio: 1; border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, var(--rojo), var(--rojo-oscuro) 75%);
+      opacity: 0; animation: aparecer 1.6s ease-out .1s forwards;
+    }
+    /* Montes */
+    .montes { position: absolute; left: 0; bottom: 0; width: 100%; height: 20vh; }
+
+    /* Samurái */
+    .samurai {
+      position: absolute; right: -2vw; bottom: 7vh;
+      height: min(72vh, 105vw); width: auto; overflow: visible;
+      opacity: 0; animation: aparecer 1s ease-out .7s forwards;
+    }
+    .katana { transform: rotate(165deg); transform-origin: 130px 125px;
+              animation: tajo .24s cubic-bezier(.5, 0, .9, .4) 1.45s forwards; }
+    .estela { stroke-dasharray: 1; stroke-dashoffset: 1;
+              animation: trazo .22s linear 1.5s forwards, desvanecer .6s ease-out 1.75s forwards; }
+
+    /* Texto cortado en diagonal */
+    main { position: absolute; left: 0; bottom: 0; padding: clamp(1.5rem, 6vw, 5rem); padding-bottom: 8vh; }
+    .titulo {
+      position: relative; display: grid; margin: 0;
+      font-size: clamp(3.2rem, 14vw, 11rem); font-weight: 900;
+      line-height: .95; letter-spacing: -.02em;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, .55);
+    }
+    .mitad { grid-area: 1 / 1; opacity: 0; }
+    .mitad span { display: block; }
+    .mitad.a { clip-path: polygon(0 0, 100% 0, 0 100%);   --d: -16px; animation: corte 1.2s cubic-bezier(.16, 1, .3, 1) 1.62s forwards; }
+    .mitad.b { clip-path: polygon(100% 0, 100% 100%, 0 100%); --d: 16px; animation: corte 1.2s cubic-bezier(.16, 1, .3, 1) 1.62s forwards; }
+    .punto { color: var(--rojo); }
+    .costura { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none;
+               filter: drop-shadow(0 0 6px #ff2a2a); opacity: 0; animation: costura 1.8s ease-out 1.62s forwards; }
+    .costura line { stroke: #ff3b3b; stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1;
+                    animation: trazo .2s linear 1.62s forwards; }
+
+    /* Sello */
+    .sello {
+      position: absolute; top: clamp(1rem, 4vw, 2.5rem); left: clamp(1rem, 4vw, 2.5rem);
+      width: 44px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: var(--rojo); color: var(--papel); font-size: 24px; line-height: 1.15; border-radius: 3px;
+      opacity: 0; animation: aparecer .8s ease-out 2.6s forwards;
+    }
+
+    .destello { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle at 40% 60%, rgba(255,255,255,.95), rgba(255,40,40,.5) 40%, transparent 75%);
+      animation: destello .55s ease-out 1.6s forwards; }
+
+    .petalo { position: fixed; top: 0; width: 10px; height: 10px; background: var(--rojo); opacity: .7;
+              border-radius: 100% 0 100% 0; pointer-events: none; animation: caer linear infinite; }
+
+    @keyframes aparecer { to { opacity: 1; } }
+    @keyframes tajo { to { transform: rotate(0deg); } }
+    @keyframes trazo { to { stroke-dashoffset: 0; } }
+    @keyframes desvanecer { to { opacity: 0; } }
+    @keyframes corte {
+      from { opacity: 1; transform: translate(var(--d), var(--d)); }
+      to   { opacity: 1; transform: translate(0, 0); }
+    }
+    @keyframes costura { 0% { opacity: 1; } 100% { opacity: .3; } }
+    @keyframes destello { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes sacudida {
+      0% { transform: none; } 20% { transform: translate(-6px, 3px); } 40% { transform: translate(5px, -3px); }
+      60% { transform: translate(-3px, 2px); } 100% { transform: none; }
+    }
+    @keyframes caer {
+      0%   { transform: translate(0, -8vh) rotate(0); }
+      50%  { transform: translate(7vw, 50vh) rotate(200deg); }
+      100% { transform: translate(-4vw, 108vh) rotate(380deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; }
+      .sol, .samurai, .sello, .mitad { opacity: 1; }
+      .katana { transform: none; }
+      .costura { opacity: .3; }
+      .costura line { stroke-dashoffset: 0; }
+      .estela, .destello { display: none; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Youssef es un Genio</h1>
+  <div class="escena">
+    <div class="sol"></div>
+    <svg class="montes" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 20 L0 12 L12 8 L22 13 L34 5 L47 12 L60 9 L72 14 L85 7 L100 12 L100 20 Z" fill="#050303"/>
+    </svg>
+
+    <svg class="samurai" viewBox="0 0 330 420" aria-hidden="true">
+      <g fill="none" stroke="#050303" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M178 235 L222 312 L250 396" stroke-width="40"/>
+        <path d="M158 235 L102 305 L96 396" stroke-width="38"/>
+        <path d="M148 140 L206 130 L204 245 L150 245 Z" fill="#050303" stroke-width="10"/>
+        <path d="M175 145 L130 125" stroke-width="20"/>
+        <path d="M200 240 Q252 250 270 292" stroke-width="8"/>
+      </g>
+      <ellipse cx="96" cy="399" rx="26" ry="6" fill="#050303"/>
+      <ellipse cx="252" cy="399" rx="26" ry="6" fill="#050303"/>
+      <circle cx="168" cy="108" r="16" fill="#050303"/>
+      <path d="M92 112 L168 56 L246 112 Q168 100 92 112 Z" fill="#050303"/>
+      <path class="estela" pathLength="1" d="M195 13 A130 130 0 0 0 38 217" fill="none" stroke="#ff3b3b" stroke-width="5" stroke-linecap="round"/>
+      <g class="katana">
+        <line x1="130" y1="125" x2="38" y2="217" stroke="#e9e2d3" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="130" y1="125" x2="150" y2="105" stroke="#050303" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="124" cy="131" r="4.5" fill="#050303" stroke="#e9e2d3" stroke-width="1"/>
+      </g>
+    </svg>
+
+    <div class="sello" aria-hidden="true"><span>天</span><span>才</span></div>
+
+    <main>
+      <h1 class="titulo" aria-label="Youssef es un Genio.">
+        <span class="mitad a" aria-hidden="true"><span>Youssef</span><span>es un</span><span>Genio<b class="punto">.</b></span></span>
+        <span class="mitad b" aria-hidden="true"><span>Youssef</span><span>es un</span><span>Genio<b class="punto">.</b></span></span>
+        <svg class="costura" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <line pathLength="1" x1="0" y1="100" x2="100" y2="0" vector-effect="non-scaling-stroke"/>
+        </svg>
+      </h1>
+    </main>
+    <div class="destello" aria-hidden="true"></div>
+  </div>
+
+  <script>
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      for (let i = 0; i < 14; i++) {
+        const p = document.createElement("span");
+        p.className = "petalo";
+        const t = 8 + Math.random() * 4;
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.width = p.style.height = 7 + Math.random() * 7 + "px";
+        p.style.animationDuration = 9 + Math.random() * 8 + "s";
+        p.style.animationDelay = 2.4 + Math.random() * 8 + "s";
+        document.body.appendChild(p);
+      }
+    }
+  </script>
 </body>
 </html>
