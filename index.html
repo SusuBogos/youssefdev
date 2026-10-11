@@ -2,43 +2,95 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#050303">
-  <meta name="description" content="Youssef es un Genio">
+  <meta name="color-scheme" content="dark">
   <title>Youssef es un Genio</title>
+  <meta name="description" content="Youssef es un Genio. 天才.">
+  <link rel="canonical" href="https://youssefdev.es/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://youssefdev.es/">
+  <meta property="og:title" content="Youssef es un Genio">
+  <meta property="og:description" content="Un solo corte. 一刀両断.">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23c4161f'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='%23efe6d6' font-family='serif'%3E%E5%A4%A9%3C/text%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;800&family=Zen+Kaku+Gothic+New:wght@500&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --negro: #050303;
+      --tinta: #0d0506;
       --rojo: #c4161f;
+      --rojo-vivo: #ff3b3b;
       --rojo-oscuro: #7d0d14;
       --papel: #efe6d6;
       --hoja: #e9e2d3;
+      --tenue: rgba(239, 230, 214, .55);
+      --margen: clamp(1.25rem, 5vw, 4.5rem);
+      --serif: "Shippori Mincho B1", "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", Georgia, serif;
+      --sans: "Zen Kaku Gothic New", "Yu Gothic", "Hiragino Sans", system-ui, sans-serif;
+      --mx: 0; --my: 0;
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
     body {
-      background: radial-gradient(ellipse at 70% 30%, #1d0709 0%, var(--negro) 70%);
+      background: radial-gradient(ellipse 90% 80% at 72% 32%, #240809 0%, #120405 38%, var(--negro) 72%);
       color: var(--papel);
-      font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", "Noto Serif", Georgia, "Times New Roman", serif;
+      font-family: var(--serif);
       overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
+    ::selection { background: var(--rojo); color: var(--papel); }
 
     .escena { position: fixed; inset: 0; animation: sacudida .3s linear 1.6s; }
+
+    /* Capas con paralaje suave */
+    .capa {
+      position: absolute; inset: 0; pointer-events: none;
+      transform: translate3d(calc(var(--mx) * var(--p, 0) * 1px), calc(var(--my) * var(--p, 0) * 1px), 0);
+      transition: transform .9s cubic-bezier(.2, .8, .2, 1);
+      will-change: transform;
+    }
 
     /* Sol rojo */
     .sol {
       position: absolute; right: 4vw; top: 8vh;
       width: min(68vmin, 640px); aspect-ratio: 1; border-radius: 50%;
-      background: radial-gradient(circle at 40% 35%, var(--rojo), var(--rojo-oscuro) 75%);
+      background:
+        radial-gradient(circle at 38% 32%, rgba(255, 120, 100, .28), transparent 42%),
+        radial-gradient(circle at 40% 35%, var(--rojo), var(--rojo-oscuro) 78%);
+      box-shadow: 0 0 120px 10px rgba(196, 22, 31, .28), 0 0 320px 40px rgba(125, 13, 20, .22);
       opacity: 0; animation: aparecer 1.6s ease-out .1s forwards;
     }
-    /* Montes */
-    .montes { position: absolute; left: 0; bottom: 0; width: 100%; height: 20vh; }
+    .anillo {
+      position: absolute; right: 4vw; top: 8vh;
+      width: min(68vmin, 640px); aspect-ratio: 1; border-radius: 50%;
+      border: 1px solid rgba(196, 22, 31, .35);
+      transform: scale(1.14);
+      opacity: 0; animation: aparecer 2s ease-out 2.2s forwards;
+    }
+    .anillo.dos { transform: scale(1.3); border-color: rgba(196, 22, 31, .14); border-style: dashed; animation-delay: 2.5s; }
+
+    /* Montes y niebla */
+    .montes { position: absolute; left: 0; bottom: 0; width: 100%; }
+    .montes.lejos { height: 30vh; opacity: 0; animation: aparecer 2s ease-out .4s forwards; }
+    .montes.medio { height: 24vh; }
+    .montes.cerca { height: 18vh; }
+    .niebla {
+      position: absolute; left: 0; right: 0; bottom: 10vh; height: 22vh;
+      background: linear-gradient(to top, transparent, rgba(125, 13, 20, .12) 45%, transparent);
+      filter: blur(8px);
+    }
 
     /* Samurái */
     .samurai {
       position: absolute; right: -2vw; bottom: 7vh;
       height: min(72vh, 105vw); width: auto; overflow: visible;
+      filter: drop-shadow(0 0 28px rgba(196, 22, 31, .22));
       opacity: 0; animation: aparecer 1s ease-out .7s forwards;
     }
     .katana { transform: rotate(165deg); transform-origin: 130px 125px;
@@ -46,12 +98,49 @@
     .estela { stroke-dasharray: 1; stroke-dashoffset: 1;
               animation: trazo .22s linear 1.5s forwards, desvanecer .6s ease-out 1.75s forwards; }
 
+    /* Cabecera */
+    .cabecera {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 3;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: clamp(1rem, 3.5vw, 2.25rem) var(--margen);
+      opacity: 0; animation: bajar 1s cubic-bezier(.16, 1, .3, 1) 2.5s forwards;
+    }
+    .marca { display: flex; align-items: center; gap: .9rem; color: inherit; text-decoration: none; }
+    .sello {
+      width: 34px; height: 62px; flex: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: var(--rojo); color: var(--papel);
+      font-size: 19px; font-weight: 800; line-height: 1.12; border-radius: 3px;
+      box-shadow: inset 0 0 0 2px rgba(239, 230, 214, .16), 0 6px 22px rgba(196, 22, 31, .3);
+    }
+    .marca-texto { display: flex; flex-direction: column; gap: .2rem; }
+    .marca-texto strong { font-size: 1.05rem; font-weight: 800; letter-spacing: .32em; text-transform: uppercase; }
+    .etiqueta, .marca-texto small {
+      font-family: var(--sans); font-size: .72rem; font-weight: 500;
+      letter-spacing: .28em; text-transform: uppercase; color: var(--tenue);
+    }
+    .indice { display: flex; align-items: center; gap: .75rem; }
+    .indice::before { content: ""; width: clamp(1.5rem, 5vw, 4rem); height: 1px; background: rgba(239, 230, 214, .3); }
+
+    /* Texto vertical */
+    .vertical {
+      position: absolute; z-index: 2; left: var(--margen); top: clamp(7rem, 18vh, 10rem); margin: 0;
+      writing-mode: vertical-rl; font-size: .95rem; letter-spacing: .6em; color: var(--tenue);
+      display: none; opacity: 0; animation: aparecer 1.4s ease-out 2.8s forwards;
+    }
+    .vertical::before { content: ""; display: inline-block; width: 1px; height: 3rem; margin-bottom: 1rem; background: var(--rojo); }
+
     /* Texto cortado en diagonal */
-    main { position: absolute; left: 0; bottom: 0; padding: clamp(1.5rem, 6vw, 5rem); padding-bottom: 8vh; }
+    main { position: absolute; left: 0; bottom: 0; z-index: 2; padding: var(--margen); padding-bottom: calc(8vh + 2.5rem); }
+    .kicker {
+      display: flex; align-items: center; gap: .9rem; margin: 0 0 clamp(.75rem, 2vh, 1.5rem);
+      opacity: 0; animation: subir 1s cubic-bezier(.16, 1, .3, 1) 2.3s forwards;
+    }
+    .kicker::before { content: ""; width: 2.5rem; height: 2px; background: var(--rojo); }
     .titulo {
       position: relative; display: grid; margin: 0;
-      font-size: clamp(3.2rem, 14vw, 11rem); font-weight: 900;
-      line-height: .95; letter-spacing: -.02em;
+      font-size: clamp(3.2rem, 14vw, 11rem); font-weight: 800;
+      line-height: .95; letter-spacing: -.025em;
       text-shadow: 0 2px 24px rgba(0, 0, 0, .55);
     }
     .mitad { grid-area: 1 / 1; opacity: 0; }
@@ -61,25 +150,40 @@
     .punto { color: var(--rojo); }
     .costura { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none;
                filter: drop-shadow(0 0 6px #ff2a2a); opacity: 0; animation: costura 1.8s ease-out 1.62s forwards; }
-    .costura line { stroke: #ff3b3b; stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1;
+    .costura line { stroke: var(--rojo-vivo); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1;
                     animation: trazo .2s linear 1.62s forwards; }
 
-    /* Sello */
-    .sello {
-      position: absolute; top: clamp(1rem, 4vw, 2.5rem); left: clamp(1rem, 4vw, 2.5rem);
-      width: 44px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      background: var(--rojo); color: var(--papel); font-size: 24px; line-height: 1.15; border-radius: 3px;
-      opacity: 0; animation: aparecer .8s ease-out 2.6s forwards;
+    /* Pie */
+    .pie {
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+      padding: 0 var(--margen) clamp(1rem, 3vh, 1.75rem);
+      opacity: 0; animation: aparecer 1.2s ease-out 3s forwards;
     }
+    .pie .etiqueta { color: rgba(239, 230, 214, .4); }
+    .pie .jp { font-family: var(--serif); letter-spacing: .5em; text-transform: none; }
 
-    .destello { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    /* Atmósfera */
+    .destello { position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 4;
       background: radial-gradient(circle at 40% 60%, rgba(255,255,255,.95), rgba(255,40,40,.5) 40%, transparent 75%);
       animation: destello .55s ease-out 1.6s forwards; }
+    .vineta { position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      background: radial-gradient(ellipse 120% 100% at 50% 45%, transparent 55%, rgba(0, 0, 0, .65)); }
+    .grano {
+      position: fixed; inset: -50%; pointer-events: none; z-index: 5; opacity: .09; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      animation: grano 1s steps(4) infinite;
+    }
 
-    .petalo { position: fixed; top: 0; width: 10px; height: 10px; background: var(--rojo); opacity: .7;
-              border-radius: 100% 0 100% 0; pointer-events: none; animation: caer linear infinite; }
+    .petalo {
+      position: fixed; top: 0; z-index: 2; pointer-events: none;
+      width: 10px; height: 10px; background: var(--rojo);
+      border-radius: 100% 0 100% 0; animation: caer linear infinite both;
+    }
 
     @keyframes aparecer { to { opacity: 1; } }
+    @keyframes subir { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @keyframes bajar { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: none; } }
     @keyframes tajo { to { transform: rotate(0deg); } }
     @keyframes trazo { to { stroke-dashoffset: 0; } }
     @keyframes desvanecer { to { opacity: 0; } }
@@ -93,15 +197,26 @@
       0% { transform: none; } 20% { transform: translate(-6px, 3px); } 40% { transform: translate(5px, -3px); }
       60% { transform: translate(-3px, 2px); } 100% { transform: none; }
     }
+    @keyframes grano {
+      0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); }
+      50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } 100% { transform: translate(0, 0); }
+    }
     @keyframes caer {
       0%   { transform: translate(0, -8vh) rotate(0); }
-      50%  { transform: translate(7vw, 50vh) rotate(200deg); }
-      100% { transform: translate(-4vw, 108vh) rotate(380deg); }
+      50%  { transform: translate(var(--x1, 7vw), 50vh) rotate(200deg); }
+      100% { transform: translate(var(--x2, -4vw), 108vh) rotate(380deg); }
+    }
+
+    @media (min-width: 900px) and (min-height: 820px) { .vertical { display: block; } }
+    @media (max-width: 600px) {
+      .indice::before { display: none; }
+      .marca-texto small { display: none; }
+      .pie .jp { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; }
-      .sol, .samurai, .sello, .mitad { opacity: 1; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .sol, .anillo, .montes.lejos, .samurai, .mitad, .cabecera, .kicker, .vertical, .pie { opacity: 1; }
       .katana { transform: none; }
       .costura { opacity: .3; }
       .costura line { stroke-dashoffset: 0; }
@@ -111,34 +226,68 @@
 </head>
 <body>
   <div class="escena">
-    <div class="sol"></div>
-    <svg class="montes" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 20 L0 12 L12 8 L22 13 L34 5 L47 12 L60 9 L72 14 L85 7 L100 12 L100 20 Z" fill="#050303"/>
-    </svg>
+    <div class="capa" style="--p: 8">
+      <div class="anillo dos" aria-hidden="true"></div>
+      <div class="anillo" aria-hidden="true"></div>
+      <div class="sol"></div>
+    </div>
 
-    <svg class="samurai" viewBox="0 0 330 420" aria-hidden="true">
-      <g fill="none" stroke="#050303" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M178 235 L222 312 L250 396" stroke-width="40"/>
-        <path d="M158 235 L102 305 L96 396" stroke-width="38"/>
-        <path d="M148 140 L206 130 L204 245 L150 245 Z" fill="#050303" stroke-width="10"/>
-        <path d="M175 145 L130 125" stroke-width="20"/>
-        <path d="M200 240 Q252 250 270 292" stroke-width="8"/>
-      </g>
-      <ellipse cx="96" cy="399" rx="26" ry="6" fill="#050303"/>
-      <ellipse cx="252" cy="399" rx="26" ry="6" fill="#050303"/>
-      <circle cx="168" cy="108" r="16" fill="#050303"/>
-      <path d="M92 112 L168 56 L246 112 Q168 100 92 112 Z" fill="#050303"/>
-      <path class="estela" pathLength="1" d="M195 13 A130 130 0 0 0 38 217" fill="none" stroke="#ff3b3b" stroke-width="5" stroke-linecap="round"/>
-      <g class="katana">
-        <line x1="130" y1="125" x2="38" y2="217" stroke="#e9e2d3" stroke-width="3.5" stroke-linecap="round"/>
-        <line x1="130" y1="125" x2="150" y2="105" stroke="#050303" stroke-width="7" stroke-linecap="round"/>
-        <circle cx="124" cy="131" r="4.5" fill="#050303" stroke="#e9e2d3" stroke-width="1"/>
-      </g>
-    </svg>
+    <div class="capa" style="--p: 5" aria-hidden="true">
+      <svg class="montes lejos" viewBox="0 0 100 30" preserveAspectRatio="none">
+        <path d="M0 30 L0 18 L8 14 L16 17 L27 8 L36 15 L44 11 L55 16 L66 6 L77 13 L88 10 L100 15 L100 30 Z" fill="#1f0709"/>
+      </svg>
+      <div class="niebla"></div>
+    </div>
+    <div class="capa" style="--p: 10" aria-hidden="true">
+      <svg class="montes medio" viewBox="0 0 100 20" preserveAspectRatio="none">
+        <path d="M0 20 L0 10 L9 12 L19 6 L30 11 L41 7 L52 12 L63 8 L76 12 L90 5 L100 9 L100 20 Z" fill="#110405"/>
+      </svg>
+    </div>
+    <div class="capa" style="--p: 14" aria-hidden="true">
+      <svg class="montes cerca" viewBox="0 0 100 20" preserveAspectRatio="none">
+        <path d="M0 20 L0 12 L12 8 L22 13 L34 5 L47 12 L60 9 L72 14 L85 7 L100 12 L100 20 Z" fill="#050303"/>
+      </svg>
+    </div>
 
-    <div class="sello" aria-hidden="true"><span>天</span><span>才</span></div>
+    <div class="capa" style="--p: 18">
+      <svg class="samurai" viewBox="0 0 330 420" aria-hidden="true">
+        <g fill="none" stroke="#050303" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M178 235 L222 312 L250 396" stroke-width="40"/>
+          <path d="M158 235 L102 305 L96 396" stroke-width="38"/>
+          <path d="M148 140 L206 130 L204 245 L150 245 Z" fill="#050303" stroke-width="10"/>
+          <path d="M175 145 L130 125" stroke-width="20"/>
+          <path d="M200 240 Q252 250 270 292" stroke-width="8"/>
+        </g>
+        <ellipse cx="96" cy="399" rx="26" ry="6" fill="#050303"/>
+        <ellipse cx="252" cy="399" rx="26" ry="6" fill="#050303"/>
+        <circle cx="168" cy="108" r="16" fill="#050303"/>
+        <path d="M92 112 L168 56 L246 112 Q168 100 92 112 Z" fill="#050303"/>
+        <path class="estela" pathLength="1" d="M195 13 A130 130 0 0 0 38 217" fill="none" stroke="#ff3b3b" stroke-width="5" stroke-linecap="round"/>
+        <g class="katana">
+          <line x1="130" y1="125" x2="38" y2="217" stroke="#e9e2d3" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="130" y1="125" x2="150" y2="105" stroke="#050303" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="124" cy="131" r="4.5" fill="#050303" stroke="#e9e2d3" stroke-width="1"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="vineta" aria-hidden="true"></div>
+
+    <header class="cabecera">
+      <a class="marca" href="/" aria-label="Youssef — inicio">
+        <span class="sello" aria-hidden="true"><span>天</span><span>才</span></span>
+        <span class="marca-texto">
+          <strong>Youssef</strong>
+          <small>youssefdev.es</small>
+        </span>
+      </a>
+      <span class="indice etiqueta">壱 · 01</span>
+    </header>
+
+    <p class="vertical" aria-hidden="true">天才の道</p>
 
     <main>
+      <p class="kicker etiqueta">開発者 · Desarrollador</p>
       <h1 class="titulo" aria-label="Youssef es un Genio.">
         <span class="mitad a" aria-hidden="true"><span>Youssef</span><span>es un</span><span>Genio<b class="punto">.</b></span></span>
         <span class="mitad b" aria-hidden="true"><span>Youssef</span><span>es un</span><span>Genio<b class="punto">.</b></span></span>
@@ -147,20 +296,48 @@
         </svg>
       </h1>
     </main>
+
+    <footer class="pie">
+      <span class="etiqueta">© 2026 Youssef</span>
+      <span class="etiqueta jp">一刀両断</span>
+    </footer>
+
     <div class="destello" aria-hidden="true"></div>
   </div>
+  <div class="grano" aria-hidden="true"></div>
 
   <script>
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      for (let i = 0; i < 14; i++) {
+    const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!quieto) {
+      const tonos = ["#c4161f", "#c4161f", "#e0333a", "#e9c9c0"];
+      for (let i = 0; i < 18; i++) {
         const p = document.createElement("span");
+        const lejos = Math.random() < .35;
+        const lado = 5 + Math.random() * 10;
         p.className = "petalo";
-        const t = 8 + Math.random() * 4;
         p.style.left = Math.random() * 100 + "vw";
-        p.style.width = p.style.height = 7 + Math.random() * 7 + "px";
-        p.style.animationDuration = 9 + Math.random() * 8 + "s";
+        p.style.width = p.style.height = (lejos ? 4 + Math.random() * 4 : 7 + Math.random() * 7) + "px";
+        p.style.background = tonos[Math.floor(Math.random() * tonos.length)];
+        p.style.opacity = lejos ? .35 : .75;
+        if (lejos) p.style.filter = "blur(1px)";
+        p.style.setProperty("--x1", (Math.random() < .5 ? -1 : 1) * lado + "vw");
+        p.style.setProperty("--x2", (Math.random() - .5) * 2 * lado + "vw");
+        p.style.animationDuration = (lejos ? 14 : 9) + Math.random() * 8 + "s";
         p.style.animationDelay = 2.4 + Math.random() * 8 + "s";
         document.body.appendChild(p);
+      }
+
+      if (window.matchMedia("(pointer: fine)").matches) {
+        const raiz = document.documentElement;
+        let marco = 0;
+        window.addEventListener("pointermove", (e) => {
+          cancelAnimationFrame(marco);
+          marco = requestAnimationFrame(() => {
+            raiz.style.setProperty("--mx", ((e.clientX / innerWidth) - .5) * -2);
+            raiz.style.setProperty("--my", ((e.clientY / innerHeight) - .5) * -2);
+          });
+        }, { passive: true });
       }
     }
   </script>
