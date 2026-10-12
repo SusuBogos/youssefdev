@@ -15,8 +15,8 @@
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='6' fill='%23a31522'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='%23edebe6' font-family='serif'%3E%E5%A4%A9%3C/text%3E%3C/svg%3E">
 
-  <link rel="preload" as="image" href="assets/img/bosque.webp" type="image/webp" fetchpriority="high">
-  <link rel="preload" as="image" href="assets/img/samurai.webp" type="image/webp">
+  <link rel="preload" as="image" href="assets/img/samurai-inicio.webp" type="image/webp" fetchpriority="high">
+  <script>document.documentElement.classList.add("js")</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;800&family=Zen+Kaku+Gothic+New:wght@500&display=swap" rel="stylesheet">
@@ -25,10 +25,13 @@
 </head>
 <body>
   <div class="scene">
-    <!-- Fondo cinematográfico: bosque, luna, faroles y reflejo en la piedra -->
+    <!-- Escena: el samurái se levanta, desenvaina y corta; luna, faroles y reflejo en la piedra -->
     <div class="capa fondo" style="--p: 6" aria-hidden="true">
-      <div class="plano" style="background-image: url(data:image/jpeg;base64,/9j/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAAbADADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAgUBBAYDB//EACAQAAEEAgMAAwAAAAAAAAAAAAEAAgMRBCEFEkETMTT/xAAXAQEBAQEAAAAAAAAAAAAAAAACAQAD/8QAGBEBAAMBAAAAAAAAAAAAAAAAAAECETH/2gAMAwEAAhEDEQA/APMwjDtUgCkKi7REF6Y4mKZZgAaKXY4Bkop1jSBkraOgEoSWqx5xi8cYBQBFOWO5kRh5c0jfidZGR2gFWUh5N7HnQo+pWzEr0pUhCES5GOM9Tdq1HM/xUlZh8WbDjGkfJEW39BKckn5HdjtaHg42PZJ2aDTSs5m/rkHlpW4kP//Z)">
-        <img class="bosque" src="assets/img/bosque.webp" width="1672" height="941" alt="" fetchpriority="high" decoding="async">
+      <div class="plano" style="background-image: url(data:image/jpeg;base64,/9j/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCAAbADADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAABAUBAgYDB//EACMQAAEEAgEEAwEAAAAAAAAAAAEAAgMRBCESBTFBYQYTNFH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAAID/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQARIf/aAAwDAQACEQMRAD8A8yCuHaVApTF3gAfJ3pMMSOAOLpnEHxSW4+5KTIt4M1snwpaC2GHmRx9MMcRHEiisj1kRh5LSN/xE4c7hjlpBu0D1N7HnQ2O62ulkMZSpCgKwXO1XjPE3aKZlubXpBIiIAt2mprjvMtlutJZk39juR2tB8fijfHJzYDTSs9m/rkHtKcgv/9k=)">
+        <video class="bosque" muted playsinline preload="none" poster="assets/img/samurai-inicio.webp" width="1920" height="1080">
+          <source src="assets/video/samurai-1080.mp4" type="video/mp4" media="(min-width: 1000px)">
+          <source src="assets/video/samurai-720.mp4" type="video/mp4">
+        </video>
         <span class="luz luna"></span>
         <span class="luz farol" style="left: 61.8%; top: 61.5%; --t: 4%; --d: 3.7s"></span>
         <span class="luz farol" style="left: 80.5%; top: 55%; --t: 7%; --d: 5.3s; --r: -1.2s"></span>
@@ -39,11 +42,6 @@
     </div>
 
     <div class="capa niebla" style="--p: 9" aria-hidden="true"><i class="lejana"></i></div>
-
-    <div class="capa figura" style="--p: 11" aria-hidden="true">
-      <span class="contacto"></span>
-      <img class="samurai" src="assets/img/samurai.webp" width="1500" height="2000" alt="" decoding="async">
-    </div>
 
     <div class="capa niebla" style="--p: 16" aria-hidden="true"><i class="suelo"></i><i class="cerca"></i></div>
     <div class="capa sombra" aria-hidden="true"></div>
@@ -79,6 +77,14 @@
 
     <footer class="footer">
       <span class="label copyright">© 2026 Youssef</span>
+      <button class="sonido label" type="button" aria-pressed="false" hidden>
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+          <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>
+          <path class="ondas" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path class="tachado" d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        Sonido
+      </button>
       <span class="footer-motto" lang="ja">一刀両断</span>
     </footer>
 

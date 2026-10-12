@@ -1,5 +1,5 @@
-// Escena viva: lluvia, hojas de arce y motas en la niebla (un solo canvas) + paralaje con el ratón.
-// Todo se detiene con prefers-reduced-motion y cuando la pestaña no está visible.
+// Escena viva: el samurái corta (vídeo) y el título se corta con él; lluvia, hojas de arce y motas
+// en un solo canvas; paralaje con el ratón. Todo se detiene con prefers-reduced-motion y en segundo plano.
 
 const movimientoReducido = window.matchMedia("(prefers-reduced-motion: reduce)");
 const punteroFino = window.matchMedia("(pointer: fine)");
@@ -25,7 +25,8 @@ function crearAtmosfera(canvas) {
   function poblar() {
     const area = ancho * alto;
     const movil = ancho < 700;
-    const nGotas = Math.round(Math.min(movil ? 90 : 230, area / (movil ? 3600 : 6200)));
+    // El vídeo ya trae su lluvia: aquí solo un primer plano ligero que da profundidad
+    const nGotas = Math.round(Math.min(movil ? 55 : 130, area / (movil ? 5200 : 9000)));
     gotas = Array.from({ length: nGotas }, () => nuevaGota(true));
     hojas = Array.from({ length: movil ? 4 : 7 }, () => nuevaHoja(true));
     motas = Array.from({ length: movil ? 8 : 16 }, nuevaMota);
@@ -176,6 +177,99 @@ function crearAtmosfera(canvas) {
   };
 }
 
+/* ───────── Secuencia del corte ───────── */
+// El instante en que la hoja barre hacia el título (segundo del vídeo)
+const INSTANTE_GOLPE = 2.9;
+
+function crearSecuencia(escena, video, boton) {
+  const raiz = document.documentElement;
+  let hecho = false, marco = 0;
+
+  const golpe = () => {
+    if (hecho) return;
+    hecho = true;
+    escena.classList.add("golpe");
+  };
+  const sinVideo = () => {
+    raiz.classList.remove("con-video");
+    raiz.classList.add("sin-video");
+    if (boton) boton.hidden = true;
+    golpe();
+  };
+
+  const ahorroDatos = navigator.connection && navigator.connection.saveData;
+  if (!video || movimientoReducido.matches || ahorroDatos) {
+    sinVideo();
+    return () => {};
+  }
+
+  raiz.classList.add("con-video");
+  let respaldo = 0;
+
+  // Vigila el tiempo del vídeo fotograma a fotograma hasta el golpe
+  const porFotograma = "requestVideoFrameCallback" in video;
+  const vigilar = () => {
+    if (video.currentTime >= INSTANTE_GOLPE) { golpe(); return; }
+    marco = porFotograma ? video.requestVideoFrameCallback(vigilar) : requestAnimationFrame(vigilar);
+  };
+  const cancelarVigilancia = () => {
+    if (porFotograma) video.cancelVideoFrameCallback(marco); else cancelAnimationFrame(marco);
+  };
+
+  let esperando = false;
+  const reproducir = () => {
+    cancelarVigilancia();
+    clearTimeout(respaldo);
+    // En una pestaña de fondo el navegador no reproduce vídeo: se espera a que se vea
+    esperando = document.hidden;
+    if (esperando) return;
+    // Si el vídeo se atasca, el título no puede quedarse oculto
+    respaldo = setTimeout(golpe, 9000);
+    video.play().then(() => {
+      if (boton) boton.hidden = false;
+      vigilar();
+    }).catch((e) => {
+      clearTimeout(respaldo);
+      if (e.name === "AbortError" && document.hidden) { esperando = true; return; }
+      video.pause();
+      sinVideo();
+    });
+  };
+  const alCambiarVisibilidad = () => { if (esperando && !document.hidden) reproducir(); };
+  // Error del vídeo o de la última fuente (cuando ya no queda ninguna que probar)
+  const fuentes = video.querySelectorAll("source");
+  const ultima = fuentes[fuentes.length - 1];
+  const alFallar = () => { clearTimeout(respaldo); sinVideo(); };
+
+  // Sonido: los navegadores no permiten audio automático, así que se activa a mano y la escena se repite
+  const alPulsar = () => {
+    const activar = video.muted;
+    video.muted = !activar;
+    boton.setAttribute("aria-pressed", String(activar));
+    if (!activar) return;
+    hecho = false;
+    escena.classList.remove("golpe");
+    video.currentTime = 0;
+    reproducir();
+  };
+
+  video.preload = "auto";
+  video.addEventListener("error", alFallar);
+  if (ultima) ultima.addEventListener("error", alFallar);
+  if (boton) boton.addEventListener("click", alPulsar);
+  document.addEventListener("visibilitychange", alCambiarVisibilidad);
+  reproducir();
+
+  return () => {
+    clearTimeout(respaldo);
+    cancelarVigilancia();
+    document.removeEventListener("visibilitychange", alCambiarVisibilidad);
+    video.removeEventListener("error", alFallar);
+    if (ultima) ultima.removeEventListener("error", alFallar);
+    if (boton) boton.removeEventListener("click", alPulsar);
+  };
+}
+
 /* ───────── Paralaje ───────── */
 function crearParalaje(raiz) {
   if (!punteroFino.matches) return () => {};
@@ -197,6 +291,8 @@ function crearParalaje(raiz) {
 
 /* ───────── Arranque ───────── */
 const limpiezas = [];
+const escena = document.querySelector(".scene");
+if (escena) limpiezas.push(crearSecuencia(escena, escena.querySelector("video.bosque"), escena.querySelector(".sonido")));
 const canvas = document.querySelector(".clima");
 if (canvas) limpiezas.push(crearAtmosfera(canvas));
 limpiezas.push(crearParalaje(document.documentElement));
